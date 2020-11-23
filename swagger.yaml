@@ -352,11 +352,3 @@ components:
           type: "string"
       xml:
         name: "Announcment"
-    ApiResponse:
-      type: "object"
-      properties:
-        code:
-          type: "integer"
-          format: "int32"
-        type:
-          type: "string"
