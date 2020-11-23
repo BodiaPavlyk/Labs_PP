@@ -1,8 +1,8 @@
-swagger: "2.0"
+openapi: 3.0.0
 info:
-  description: AD Service REST API
+  description: Announcement Service REST API (lab 5)
   version: "1.0.0"
-  title: AD Service
+  title: Announcement Service
   contact:
     email: bogdan2002mih@gmail.com
 servers:
@@ -16,6 +16,7 @@ tags:
   
   
 paths:
+
   /user:
     post:
       tags:
@@ -126,7 +127,7 @@ paths:
     delete:
       tags:
         - user
-      summary: deletes
+      summary: Deletes the user
       description: only logged in users can do it
       operationId: deleteUser
       parameters:
@@ -141,36 +142,29 @@ paths:
           description: invalid user
         '404':
           description: user does not exist
-          
+  
   /announcement:
     get:
       tags:
-        - announcement
-      summary: User`s announcements
-      operationId: showAn
-      description: Showing all your announcements
+      - announcement
+      summary: Get all public announcements from db
+      operationId: getAnnouncements
       responses:
-        '200':
-          description: search results by the theme
+        "200":
+          description: OK
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Announcement"
-        '400':
-          description: bad input parameter
-      security:
-        - authentification:
-            - read:an
-            
+                  $ref: '#/components/schemas/Announcement'
     post:
       tags:
       - announcement
-      summary: Add new announcement
-      operationId: addAn
+      summary: Add a new announcement to db
+      operationId: addAnnouncement
       requestBody:
-        $ref: "#/components/requestBodies/Announcement"
+        $ref: '#/components/requestBodies/Announcement'
       responses:
         "201":
           description: Announcement was created successfully
@@ -178,13 +172,22 @@ paths:
           description: Access token is missing or invalid
       security:
       - authentification:
-        - write:a
-        
+        - write:an
+          
+  /announcement/{anId}:
     put:
       tags:
       - announcement
-      summary: Edit the announcement
-      operationId: editAn
+      summary: Edit announcement
+      operationId: editAnnouncement
+      parameters:
+      - name: anId
+        in: path
+        description: Id of an announcement
+        required: true
+        schema:
+          type: integer
+          format: integer64
       responses:
         "200":
           description: Announcement was edited successfully
@@ -202,12 +205,19 @@ paths:
       security:
       - authentification:
         - write:an
-        
     delete:
       tags:
       - announcement
-      summary: Delete the announcement
-      operationId: delete An
+      summary: Delete announcement by id
+      operationId: deleteAn
+      parameters:
+      - name: anId
+        in: path
+        description: Id of an announcement
+        required: true
+        schema:
+          type: integer
+          format: integer64
       responses:
         "200":
           description: Announcement was deleted successfully
@@ -243,9 +253,6 @@ paths:
                 type: "array"
                 items:
                   $ref: "#/components/schemas/Announcement"
-      security:
-       - authentification:
-            - read:an
   
   /announcements/local:
     get:
@@ -266,7 +273,7 @@ paths:
           description: Access token is missing or invalid
       security:
       - authentification:
-        - read:a
+        - read:an
 
 components:
   requestBodies:
@@ -352,11 +359,3 @@ components:
           type: "string"
       xml:
         name: "Announcment"
-    ApiResponse:
-      type: "object"
-      properties:
-        code:
-          type: "integer"
-          format: "int32"
-        type:
-          type: "string"
