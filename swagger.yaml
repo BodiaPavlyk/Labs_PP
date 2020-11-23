@@ -147,8 +147,8 @@ paths:
     get:
       tags:
       - announcement
-      summary: Get all public announcements from db
-      operationId: getAnnouncements
+      summary: Get all announcements created by user
+      operationId: showAn
       responses:
         "200":
           description: OK
@@ -161,8 +161,8 @@ paths:
     post:
       tags:
       - announcement
-      summary: Add a new announcement to db
-      operationId: addAnnouncement
+      summary: Add a new announcement
+      operationId: addAn
       requestBody:
         $ref: '#/components/requestBodies/Announcement'
       responses:
@@ -179,7 +179,7 @@ paths:
       tags:
       - announcement
       summary: Edit announcement
-      operationId: editAnnouncement
+      operationId: editAn
       parameters:
       - name: anId
         in: path
