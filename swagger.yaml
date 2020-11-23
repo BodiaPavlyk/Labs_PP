@@ -158,6 +158,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Announcement'
+      security:
+      - authentification:
+        - read:an
     post:
       tags:
       - announcement
