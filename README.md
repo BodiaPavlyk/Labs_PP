@@ -26,3 +26,9 @@
 <br><code>pyenv install 3.7.9</code>
 <br> •Для встановлення pipenv:
 <br><code>pip install pipenv</code>
+<h3>3. Запуск у PyCharm</h3>
+<br> Для запуску проекту, необхідно:
+<br> 1.Відкрити <b>PyCharm</b> та відкрити папку проекту
+<br> 2.Підключити бібліотек gevent у терміналі за допомогою команди pipenv install gevent
+<br> 3.Скомпілювати код
+<br> 4.Після запуску перейшовши за адресою <i>http://localhost:5000/api/v1/hello-world-20</i>, ви побачити текст "Hello world! Варіант 20"
