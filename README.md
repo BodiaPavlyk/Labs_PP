@@ -9,5 +9,15 @@
     <br> 2. Для Linux - <i>http://git-scm.com/download/linux</i>
     <br> 3. Для Mac - <i>http://git-scm.com/download/mac</i>
     <br><br> •Спочатку необхідно створити папку, куди ми будемо клонувати репозиторі
-    <br><br> •Далі, нажимаємо правою кнопкою миші на папку та вибираємо опцію Git Bash here
-    <br><br> •Далі необхідно ввести таку команду: <code>git clone https://github.com/BodiaPavlyk/Labs_PP.git</code>
+    <br> •Далі, нажимаємо правою кнопкою миші на папку та вибираємо опцію Git Bash here
+    <br> •Далі необхідно ввести таку команду: <code>git clone https://github.com/BodiaPavlyk/Labs_PP.git</code>
+<h3>2. Інсталяція python та віртуального середовища </h3>
+(For Windows)
+<br><b>1. Інсталюєм pyenv для встановлення python</b>
+<br> •Для цього необхідно відкрити командний рядок та ввести наступну команду:
+<br><code>pip install pyenv-win --target %USERPROFILE%\.pyenv</code>
+<br> •Далі, відкриваємо програму PowerShell, де вводимо команди:
+<br><code>[System.Environment]::SetEnvironmentVariable('PYENV',$env:USERPROFILE + "\.pyenv\pyenv-win\","User")</code>
+<br><code>[System.Environment][System.Environment]::SetEnvironmentVariable('path', $HOME + "\.pyenv\pyenv-win\bin;" + $HOME + "\.pyenv\pyenv-win\shims;" + $env:Path,"User")</code>
+<br> Для перевірки, вводимо у командному рядку команду <code>pyenv --version</code>, яка повинна показати версію встановленого pyenv
+<br> Детальніше на сайті <i>https://pypi.org/project/pyenv-win/</i>
