@@ -8,7 +8,7 @@ program = Flask(__name__)
 
 @program.route("/api/v1/hello-world-20")
 def hello():
-    return render_template("hello.html")
+    return "Hello world! Варіант 20"
 
 
 server = WSGIServer(('127.0.0.1', 5000), program)
