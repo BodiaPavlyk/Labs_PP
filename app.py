@@ -1,12 +1,15 @@
-from flask import Flask,jsonify,request,render_template
-app = Flask(__name__)
+from gevent.pywsgi import WSGIServer
+from flask import Flask
+from flask import render_template
 
 
-@app.route('/Bodia')
-def hello_world():
-    test = request.args.get('test', '')
-    return "test = " + test
+program = Flask(__name__)
 
 
-if __name__ == '__main__':
-    app.run()
+@program.route("/api/v1/hello-world-20")
+def hello():
+    return render_template("hello.html")
+
+
+server = WSGIServer(('127.0.0.1', 5000), program)
+server.serve_forever()
