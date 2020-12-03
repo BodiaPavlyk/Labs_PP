@@ -1,4 +1,4 @@
-swagger: "2.0"
+openapi: "3.0.1"
 info:
   description: AD Service REST API
   version: "1.0.0"
@@ -179,12 +179,21 @@ paths:
       security:
       - authentification:
         - write:a
-        
+   
+  '/announcement/{announcement_ID}':      
     put:
       tags:
       - announcement
       summary: Edit the announcement
       operationId: editAn
+      parameters:
+        - name: announcement_ID
+          in: path
+          description: Id of an announcement to be updated
+          required: true
+          schema:
+            type: integer
+            format: integer64
       responses:
         "200":
           description: Announcement was edited successfully
@@ -207,7 +216,15 @@ paths:
       tags:
       - announcement
       summary: Delete the announcement
-      operationId: delete An
+      operationId: deleteAn
+      parameters:
+        - name: announcement_ID
+          in: path
+          description: Id of an announcement to be deleted
+          required: true
+          schema:
+            type: integer
+            format: integer64
       responses:
         "200":
           description: Announcement was deleted successfully
