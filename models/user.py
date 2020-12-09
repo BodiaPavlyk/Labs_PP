@@ -13,7 +13,6 @@ class User(db.Model):
     email = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(50), nullable=False)
     location = db.Column(db.String(100), nullable=False)
-    #list_of_announcements = db.relationship('Announcement', backref='User')
 
     def __init__(self,
                  user_name=None,

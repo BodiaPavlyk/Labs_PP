@@ -84,17 +84,15 @@ class UserController(object):
         if updated_user.Invalid_Data():
             return jsonify(message='Bad request. Invalid data!', status=400)
 
-        #self.user=updated_user
-        #db.session.merge(self.user)
-        #db.session.flush()
         User.query.filter_by(id=self.user.id).update({
-            'user_name':updated_user.user_name,
-            'first_name':updated_user.first_name,
-            'last_name':updated_user.last_name,
-            'email':updated_user.email,
-            'password':updated_user.password,
-            'location':updated_user.location})
-        #db.session.add(self.user)
+            'user_name': updated_user.user_name,
+            'first_name': updated_user.first_name,
+            'last_name': updated_user.last_name,
+            'email': updated_user.email,
+            'password': updated_user.password,
+            'location': updated_user.location
+        })
+        # db.session.add(self.user)
         db.session.commit()
         return jsonify(message='Successful update operation!', status=200)
 
