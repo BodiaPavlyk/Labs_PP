@@ -6,29 +6,26 @@ from database import db
 
 
 program = Flask(__name__)
+program.secret_key = 'Some secret key'
 program.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 program.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(program)
+
+from routes import announcement_routes, user_routes
 
 migrate = Migrate(program, db)
 
 manager = Manager(program)
 manager.add_command('db', MigrateCommand)
 
-
-def db_create():
-    db.create_all()
-
-
 @program.route("/api/v1/hello-world-20")
 def hello():
     return "Hello world! Варіант 20"
 
 
-server = WSGIServer(('127.0.0.1', 5000), program)
-server.serve_forever()
+"""server = WSGIServer(('127.0.0.1', 5000), program)
+server.serve_forever()"""
 
 
-"""if __name__ == '__main__':
+if __name__ == '__main__':
     program.run()
-"""
