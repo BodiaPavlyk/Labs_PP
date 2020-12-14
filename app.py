@@ -1,28 +1,50 @@
 from gevent.pywsgi import WSGIServer
-from flask import Flask
+from flask import Flask, jsonify, request
+from functools import wraps
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from database import db
+import jwt
 
 
 program = Flask(__name__)
 program.secret_key = 'Some secret key'
+program.config['SECRET_KEY'] = 'super-secret'
 program.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 program.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(program)
 
-from routes import announcement_routes, user_routes
 
 migrate = Migrate(program, db)
 
 manager = Manager(program)
 manager.add_command('db', MigrateCommand)
 
-@program.route("/api/v1/hello-world-20")
-def hello():
-    return "Hello world! Варіант 20"
+from models.user import User
 
 
+def token_required(f):
+    @wraps(f)
+    def tokens(*args, **kwargs):
+        token = None
+        if 'x-access-token' in request.headers:
+            token = request.headers['x-access-token']
+        if not token:
+            return jsonify(message="Token is missing!!", status=200)
+        #try:
+        data = jwt.decode(token, program.config['SECRET_KEY'])
+        current_user = User.query.filter_by(id=data['id']).first()
+        if not current_user:
+            print("Error")
+            return "ERROR"
+        #except:
+            #return jsonify(message=token + " Token is invalid!!!", status=401)
+        return f(current_user, *args, **kwargs)
+
+    return tokens
+
+
+from routes import announcement_routes, user_routes
 """server = WSGIServer(('127.0.0.1', 5000), program)
 server.serve_forever()"""
 

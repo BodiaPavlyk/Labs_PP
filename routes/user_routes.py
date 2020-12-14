@@ -1,31 +1,43 @@
-from app import program
+from app import program, token_required
 from controllers.user_controller import UserController
 from flask import request
 
+program.config['SECRET_KEY'] = 'super-secret'
 
-@program.route("/U")
-def hello2():
-    return "Good"
+#http://127.0.0.1:5000/User?user_name=name&first_name=fname&last_name=lm&email=name@gmail.com&password=1111&location=Lviv
 
 
-@program.route("/User", methods=['POST'])
-def create_user():
+@program.route("/login", methods=['POST'])
+def login_user():
     user_controller = UserController()
-    return user_controller.Create(request.args)
+    return user_controller.login(request.authorization)
 
 
+@program.route("/register", methods=['POST'])
+def register_user():
+    user_controller = UserController()
+    return user_controller.registration(request.args)
+
+
+#http://127.0.0.1:5000/User?user_name=name
 @program.route("/User/", methods=['GET'])
-def read_user():
+@token_required
+def read_user(current_user):
     user_controller = UserController()
-    return user_controller.Read(request.args)
+    return user_controller.Read(current_user)
 
 
+#http://127.0.0.1:5000/User?user_name=name&new_user_name=NAME&new_first_name=FNAME&new_last_name=LM&email=name1@gmail.com&new_password=2222&new_location=LVIV
 @program.route("/User/", methods=['PUT'])
-def update_user():
+@token_required
+def update_user(current_user):
     user_controller = UserController()
-    return user_controller.Update(request.args)
+    return user_controller.Update(request.args, current_user)
 
+
+#http://127.0.0.1:5000/User?user_name=NAME
 @program.route("/User/", methods=['DELETE'])
-def delete_user():
+@token_required
+def delete_user(current_user):
     user_controller = UserController()
-    return user_controller.Delete(request.args)
+    return user_controller.Delete(current_user)

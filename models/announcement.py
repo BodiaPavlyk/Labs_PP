@@ -22,14 +22,12 @@ class Announcement(db.Model):
                  type_of_announcement=None,
                  description=None,
                  location=None,
-                 date_of_publication=None,
                  creator=None):
         self.name = name
         self.theme = theme
         self.type_of_announcement = type_of_announcement
         self.description = description
         self.location = location
-        self.date_of_publication=date_of_publication
         self.creator = creator
 
 
@@ -42,7 +40,7 @@ class Announcement(db.Model):
             return True
         if not self.description:
             return True
-        if not self.location:
+        if self.type_of_announcement == "local" and not self.location:
             return True
         if not self.creator:
             return True
