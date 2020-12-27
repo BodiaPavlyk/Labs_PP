@@ -1,6 +1,7 @@
 from app import program, token_required
 from controllers.user_controller import UserController
 from flask import request
+import json
 
 program.config['SECRET_KEY'] = 'super-secret'
 
@@ -16,15 +17,16 @@ def login_user():
 @program.route("/register", methods=['POST'])
 def register_user():
     user_controller = UserController()
-    return user_controller.registration(request.args)
+    return user_controller.registration(request.get_json())
 
 
 #http://127.0.0.1:5000/User?user_name=name
 @program.route("/User/", methods=['GET'])
 @token_required
 def read_user(current_user):
+    print(1)
     user_controller = UserController()
-    return user_controller.Read(current_user)
+    return user_controller.Read(request.get_json(), current_user)
 
 
 #http://127.0.0.1:5000/User?user_name=name&new_user_name=NAME&new_first_name=FNAME&new_last_name=LM&email=name1@gmail.com&new_password=2222&new_location=LVIV

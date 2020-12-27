@@ -3,7 +3,7 @@ from database import db
 from models.user import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import program
-import jwt
+import jwt, json
 import datetime
 
 
@@ -42,7 +42,6 @@ class UserController(object):
             access_token = jwt.encode({'id': user.id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, program.config["SECRET_KEY"])
             return jsonify(message="User was logged in", token=access_token.decode('UTF-8'), status=200)
         return make_response('Couldn`t verify!', 401, {'WWW-authenticate': 'Basic realm="Login Required'})
-
 
     def Read(self, current_user=None):
         if current_user:

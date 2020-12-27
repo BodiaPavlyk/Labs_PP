@@ -30,7 +30,6 @@ class Announcement(db.Model):
         self.location = location
         self.creator = creator
 
-
     def Any_Empty_Field(self):
         if not self.name:
             return True
@@ -45,7 +44,6 @@ class Announcement(db.Model):
         if not self.creator:
             return True
         return False
-
 
     @classmethod
     def Get_from_db(self, user_id=None, announcement_id=None, type_of_announcement=None, location=None):
