@@ -31,8 +31,8 @@ class UserController(object):
     def login(self, user_parameters=None):
         if not user_parameters:
             return make_response('Could verify!', 401, {'WWW-authenticate': 'Basic realm="Login Required'})
-        user_name = user_parameters.username
-        password = user_parameters.password
+        user_name = user_parameters['user_name']
+        password = user_parameters['password']
         if not user_name or not password:
             return jsonify(message="Missing values!", status=400)
         user = User.Get_from_db(user_name=user_name)
@@ -50,6 +50,8 @@ class UserController(object):
         return jsonify(message='User not found!', status=404)
 
     def Update(self, user_parameters=None, current_user=None):
+
+        user = User.Get_from_db(user_name=current_user.user_name)
 
         if not current_user:
             return jsonify(message='User not found!', status=404)
@@ -106,8 +108,7 @@ class UserController(object):
 
     def Delete(self, user_name=None):
 
-        user_name = user_name.get('user_name')
-        user = User.Get_from_db(user_name=user_name)
+        user = User.Get_from_db(user_name=user_name.user_name)
         if user:
             db.session.delete(user)
             db.session.commit()

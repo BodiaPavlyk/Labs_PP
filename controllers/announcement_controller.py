@@ -47,11 +47,13 @@ class AnnouncementController(object):
         return jsonify(message='Announcements not found!', status=404)
 
     def Update(self, announcement_parameters=None, current_user=None):
+
         announcement_id = announcement_parameters.get('announcement_id')
         announcement = Announcement.Get_from_db(announcement_id=announcement_id)
+
         if not announcement:
             return jsonify(message='Announcements not found!', status=404)
-        elif announcement.id != current_user.id:
+        elif announcement.user_id != current_user.id:
             return jsonify(message='You don`t have rights to do this!', status=403)
         updated_announcement = Announcement()
         if announcement_parameters.get('new_name'):
@@ -95,7 +97,7 @@ class AnnouncementController(object):
         announcement = Announcement.Get_from_db(announcement_id=announcement_id)
         if not announcement:
             return jsonify(message='Announcements not found!', status=404)
-        elif announcement.id != current_user.id:
+        elif announcement.user_id != current_user.id:
             return jsonify(message='You don`t have rights to do this!', status=403)
         if announcement:
             db.session.delete(announcement)

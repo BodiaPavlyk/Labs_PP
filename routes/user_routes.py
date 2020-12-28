@@ -11,7 +11,7 @@ program.config['SECRET_KEY'] = 'super-secret'
 @program.route("/login", methods=['POST'])
 def login_user():
     user_controller = UserController()
-    return user_controller.login(request.authorization)
+    return user_controller.login(request.get_json())
 
 
 @program.route("/register", methods=['POST'])
@@ -24,9 +24,8 @@ def register_user():
 @program.route("/User/", methods=['GET'])
 @token_required
 def read_user(current_user):
-    print(1)
     user_controller = UserController()
-    return user_controller.Read(request.get_json(), current_user)
+    return user_controller.Read(current_user)
 
 
 #http://127.0.0.1:5000/User?user_name=name&new_user_name=NAME&new_first_name=FNAME&new_last_name=LM&email=name1@gmail.com&new_password=2222&new_location=LVIV
@@ -34,7 +33,7 @@ def read_user(current_user):
 @token_required
 def update_user(current_user):
     user_controller = UserController()
-    return user_controller.Update(request.args, current_user)
+    return user_controller.Update(request.get_json(), current_user)
 
 
 #http://127.0.0.1:5000/User?user_name=NAME

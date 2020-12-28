@@ -1,6 +1,7 @@
 from app import program, token_required
 from controllers.announcement_controller import AnnouncementController
 from flask import request
+import json
 
 program.config['SECRET_KEY'] = 'super-secret'
 
@@ -9,7 +10,7 @@ program.config['SECRET_KEY'] = 'super-secret'
 @token_required
 def create_announcement(current_user):
     announcement_controller = AnnouncementController()
-    return announcement_controller.Create(request.args, current_user)
+    return announcement_controller.Create(request.get_json(), current_user)
 
 
 @program.route("/Announcement", methods=['GET'])
@@ -36,11 +37,11 @@ def local_announcement(current_user):
 @token_required
 def update_announcement(current_user):
     announcement_controller = AnnouncementController()
-    return announcement_controller.Update(request.args, current_user)
+    return announcement_controller.Update(request.get_json(), current_user)
 
 
 @program.route("/Announcement/", methods=['DELETE'])
 @token_required
 def delete_announcement(current_user):
     announcement_controller = AnnouncementController()
-    return announcement_controller.Delete(request.args, current_user)
+    return announcement_controller.Delete(request.get_json(), current_user)
