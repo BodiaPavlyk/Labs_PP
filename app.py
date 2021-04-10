@@ -4,6 +4,8 @@ from functools import wraps
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from database import db
+from Email import Email, bcrypt
+import smtplib
 import jwt
 
 
@@ -12,7 +14,17 @@ program.secret_key = 'Some secret key'
 program.config['SECRET_KEY'] = 'super-secret'
 program.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 program.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+program.config['MAIL_SERVER'] = "smtp.gmail.com"
+program.config['MAIL_PORT'] = 465
+program.config['MAIL_USERNAME'] = "geoclock.app@gmail.com"
+program.config['MAIL_PASSWORD'] = "GeoClock.app2021"
+program.config['MAIL_USE_TLS'] = False
+program.config['MAIL_USE_SSL'] = True
+
+Email.init_app(program)
 db.init_app(program)
+bcrypt.init_app(program)
 
 
 migrate = Migrate(program, db)

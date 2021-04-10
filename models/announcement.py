@@ -1,5 +1,6 @@
 from database import db
 from datetime import datetime
+from .saved_announcements import Saved
 
 
 class Announcement(db.Model):
@@ -15,6 +16,7 @@ class Announcement(db.Model):
     date_of_publication = db.Column(db.DATETIME, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     creator = db.relationship('User', backref='announcement')
+    saved_announcement = db.relationship('Saved', backref='announcement')
 
     def __init__(self,
                  name=None,

@@ -1,7 +1,8 @@
 from flask import jsonify, make_response
+from models.announcement import Announcement
 from database import db
 from models.user import User
-from werkzeug.security import generate_password_hash, check_password_hash
+from Email import bcrypt
 from app import program
 import jwt, json
 import datetime
@@ -15,37 +16,41 @@ class UserController(object):
         last_name = user_parameters.get('last_name')
         email = user_parameters.get('email')
         if user_parameters.get('password'):
-            password = generate_password_hash(user_parameters.get('password'))
-        location = user_parameters.get('location')
-        user = User(user_name, first_name, last_name, email, password, location)
+            password = bcrypt.generate_password_hash(user_parameters.get('password'))
+        user = User(user_name, first_name, last_name, email, password)
         if user.Any_Empty_Field():
             return jsonify(message='Bad request. Contain empty field(s)!', status=400)
         if user.Invalid_Data():
             return jsonify(message='Bad request. Invalid data!', status=400)
+        if not bcrypt.check_password_hash(password, user_parameters.get('confirm_password')):
+            return jsonify(message='Passwords don`t match!', status=400)
         if User.Get_from_db(user_name=user_name) or User.Get_from_db(email=email):
             return jsonify(message='User with such user_name/email already exist!', status=409)
+        access_token = jwt.encode({'id': user.id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
+                                  program.config["SECRET_KEY"])
         db.session.add(user)
         db.session.commit()
-        return jsonify(message="Registered successfully! Now, please login", status=200)
+        return jsonify(message="Registered successfully!", token=access_token.decode('UTF-8'), status=200)
 
     def login(self, user_parameters=None):
         if not user_parameters:
-            return make_response('Could verify!', 401, {'WWW-authenticate': 'Basic realm="Login Required'})
+            return jsonify(message='Couldn`t verify!', status=401)
         user_name = user_parameters['user_name']
         password = user_parameters['password']
         if not user_name or not password:
             return jsonify(message="Missing values!", status=400)
         user = User.Get_from_db(user_name=user_name)
         if not user:
-            return make_response('Couldn`t verify!', 401, {'WWW-authenticate': 'Basic realm="Login Required'})
-        elif check_password_hash(user.password, password):
+            return jsonify(message='Couldn`t verify!', status=401)
+        elif bcrypt.check_password_hash(user.password, password):
             access_token = jwt.encode({'id': user.id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, program.config["SECRET_KEY"])
             return jsonify(message="User was logged in", token=access_token.decode('UTF-8'), status=200)
-        return make_response('Couldn`t verify!', 401, {'WWW-authenticate': 'Basic realm="Login Required'})
+        return jsonify(message='Couldn`t verify!', status=401)
 
     def Read(self, current_user=None):
         if current_user:
-            return jsonify(info=[current_user.user_name, current_user.first_name, current_user.last_name, current_user.email, current_user.location], status=200)
+            count = len(Announcement.query.filter_by(user_id=current_user.id).all())
+            return jsonify(info=[current_user.user_name, current_user.first_name, current_user.last_name, current_user.email, count], status=200)
 
         return jsonify(message='User not found!', status=404)
 
@@ -78,14 +83,9 @@ class UserController(object):
             updated_user.email = current_user.email
 
         if user_parameters.get('new_password'):
-            updated_user.password = generate_password_hash(user_parameters.get('new_password'))
+            updated_user.password = bcrypt.generate_password_hash(user_parameters.get('new_password'))
         else:
             updated_user.password = current_user.password
-
-        if user_parameters.get('new_location'):
-            updated_user.location = user_parameters.get('new_location')
-        else:
-            updated_user.location = current_user.location
 
         user_by_name = User.Get_from_db(user_name=updated_user.user_name)
         user_by_email = User.Get_from_db(email=updated_user.email)
@@ -100,8 +100,7 @@ class UserController(object):
             'first_name': updated_user.first_name,
             'last_name': updated_user.last_name,
             'email': updated_user.email,
-            'password': updated_user.password,
-            'location': updated_user.location
+            'password': updated_user.password
         })
         db.session.commit()
         return jsonify(message='Successful update operation!', status=200)

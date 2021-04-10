@@ -1,5 +1,6 @@
 from database import db
 from re import *
+from .saved_announcements import Saved
 
 
 class User(db.Model):
@@ -12,7 +13,8 @@ class User(db.Model):
     last_name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(50), nullable=False)
-    location = db.Column(db.String(100), nullable=False)
+    hash_code = db.Column(db.String(120))
+    saved_announcement = db.relationship('Saved', backref='user')
 
     def __init__(self,
                  user_name=None,
@@ -20,13 +22,13 @@ class User(db.Model):
                  last_name=None,
                  email=None,
                  password=None,
-                 location=None):
+                 hash_code=None):
         self.user_name = user_name
         self.first_name = first_name
         self.last_name = last_name
+        self.hash_code = hash_code
         self.email = email
         self.password = password
-        self.location = location
 
     def Any_Empty_Field(self):
         if not self.user_name:
@@ -39,15 +41,12 @@ class User(db.Model):
             return True
         if not self.password:
             return True
-        if not self.location:
-            return True
         return False
 
 
     def Invalid_Data(self):
         name = compile('(^|\s)(\w){2,30}(\s|$)')
         email = compile('(^|\s)[-a-z|0-9_.]+@([-a-z0-9]+\.)+[a-z]{2,6}(\s|$)')
-        city = compile('(^|\s)(\w){2,40}(\s|$)')
         if not name.match(self.user_name):
             return True
         if not name.match(self.first_name):
@@ -55,8 +54,6 @@ class User(db.Model):
         if not name.match(self.last_name):
             return True
         if not email.match(self.email):
-            return True
-        if not city.match(self.location):
             return True
         return False
 
