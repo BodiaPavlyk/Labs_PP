@@ -34,16 +34,22 @@ class Announcement(db.Model):
 
     def Any_Empty_Field(self):
         if not self.name:
+            print("name")
             return True
         if not self.theme:
+            print("theme")
             return True
         if not self.type_of_announcement:
+            print("type")
             return True
         if not self.description:
+            print("description")
             return True
         if self.type_of_announcement == "local" and not self.location:
+            print("location")
             return True
         if not self.creator:
+            print("creator")
             return True
         return False
 

@@ -5,6 +5,7 @@ from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from database import db
 from Email import Email, bcrypt
+from flask_cors import CORS
 import smtplib
 import jwt
 
@@ -25,6 +26,7 @@ program.config['MAIL_USE_SSL'] = True
 Email.init_app(program)
 db.init_app(program)
 bcrypt.init_app(program)
+CORS(program)
 
 
 migrate = Migrate(program, db)
@@ -39,12 +41,13 @@ def token_required(f):
     @wraps(f)
     def tokens(*args, **kwargs):
         token = None
-        if 'x-access-token' in request.headers:
-            token = request.headers['x-access-token']
+        response = request.get_json()
+        if 'x_access_token' in response:
+            token = response.get('x_access_token')
         if not token:
-            return jsonify(message="Token is missing!!", status=200)
+            return jsonify(message="Token is missing!!", status=400)
         #try:
-        data = jwt.decode(token, program.config['SECRET_KEY'])
+        data = jwt.decode(token, program.config['SECRET_KEY'], algorithms=["HS256"])
         current_user = User.query.filter_by(id=data['id']).first()
         if not current_user:
             print("Error")

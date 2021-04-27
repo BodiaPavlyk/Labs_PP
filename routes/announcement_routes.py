@@ -13,34 +13,41 @@ def create_announcement(current_user):
     return announcement_controller.Create(request.get_json(), current_user)
 
 
-@program.route("/Announcement", methods=['GET'])
+@program.route("/Announcement/getInfo", methods=['POST'])
+@token_required
+def getinfo_announcement(current_user):
+    announcement_controller = AnnouncementController()
+    return announcement_controller.Read_certain(request.get_json().get("id"))
+
+
+@program.route("/Announcement", methods=['POST'])
 @token_required
 def users_announcement(current_user):
     announcement_controller = AnnouncementController()
-    return announcement_controller.Read_by_User(request.get_json())
+    return announcement_controller.Read_by_User(current_user)
 
 
-@program.route("/Announcement/public", methods=['GET'])
+@program.route("/Announcement/public", methods=['POST'])
 def public_announcement():
     announcement_controller = AnnouncementController()
     return announcement_controller.Read_Public()
 
 
-@program.route("/Announcement/local", methods=['GET'])
+@program.route("/Announcement/local", methods=['POST'])
 @token_required
 def local_announcement(current_user):
     announcement_controller = AnnouncementController()
-    return announcement_controller.Read_Local(request.get_json())
+    return announcement_controller.Read_Local()
 
 
-@program.route("/Announcement/edit", methods=['PUT'])
+@program.route("/Announcement/edit", methods=['POST'])
 @token_required
 def update_announcement(current_user):
     announcement_controller = AnnouncementController()
     return announcement_controller.Update(request.get_json(), current_user)
 
 
-@program.route("/Announcement/delete", methods=['DELETE'])
+@program.route("/Announcement/delete", methods=['POST'])
 @token_required
 def delete_announcement(current_user):
     announcement_controller = AnnouncementController()
@@ -54,21 +61,21 @@ def add_saved_announcement(current_user):
     return announcement_controller.add_to_saved(request.get_json().get("id"), current_user)
 
 
-@program.route("/saved_announcement/delete", methods=['DELETE'])
+@program.route("/saved_announcement/delete", methods=['POST'])
 @token_required
 def delete_saved_announcement(current_user):
     announcement_controller = AnnouncementController()
     return announcement_controller.delete_from_saved(request.get_json().get("id"), current_user)
 
 
-@program.route("/saved_announcement", methods=['GET'])
+@program.route("/saved_announcement", methods=['POST'])
 @token_required
 def users_saved_announcements(current_user):
     announcement_controller = AnnouncementController()
     return announcement_controller.get_all_saved(current_user)
 
 
-@program.route("/filter", methods=['GET'])
+@program.route("/filter", methods=['POST'])
 @token_required
 def filter(current_user):
     announcement_controller = AnnouncementController()

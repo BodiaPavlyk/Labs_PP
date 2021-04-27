@@ -25,9 +25,11 @@ class AnnouncementController(object):
         return jsonify(message='Successfully created announcement!', status=200)
 
     def Read_by_User(self, user_id=None):
+        print(user_id.id)
         list_of_announcements = Announcement.Get_from_db(user_id=user_id.id)
+        print(list_of_announcements)
         if list_of_announcements:
-            return jsonify(list_of_announcements=[[i.id, i.name, i.theme, i.description, (User.query.filter_by(id=i.user_id).first()).email, i.date_of_publication] for i in list_of_announcements], status=200)
+            return jsonify(list_of_announcements=[[i.id, i.name, i.theme, i.date_of_publication, i.description] for i in list_of_announcements], status=200)
 
         return jsonify(message='Announcements not found!', status=404)
 
@@ -38,14 +40,22 @@ class AnnouncementController(object):
 
         return jsonify(message='Announcements not found!', status=404)
 
-    def Read_Local(self, location=None):
-
-        location = location.get('location')
-        list_of_announcements = Announcement.Get_from_db(location=location)
+    def Read_Local(self):
+        list_of_announcements = Announcement.query.all()
         if list_of_announcements:
-            return jsonify(list_of_local_announcements=[[i.id, i.name, i.theme, i.description, i.location, (User.query.filter_by(id=i.user_id).first()).email, i.date_of_publication] for i in list_of_announcements], status=200)
+            return jsonify(list_of_local_announcements=[[i.id, i.name, i.theme, i.type_of_announcement, i.description, i.location, (User.query.filter_by(id=i.user_id).first()).email, i.date_of_publication] for i in list_of_announcements], status=200)
 
         return jsonify(message='Announcements not found!', status=404)
+    
+    
+    def Read_certain(self, announcement_id=None):
+        list_of_announcements = Announcement.query.filter_by(id=announcement_id).first()
+        if list_of_announcements:
+            i = list_of_announcements
+            return jsonify(list_of_local_announcements=[i.id, i.name, i.theme, i.type_of_announcement, i.description, (User.query.filter_by(id=i.user_id).first()).email, i.location, i.date_of_publication], status=200)
+
+        return jsonify(message='Announcement not found!', status=404)
+    
 
     def get_all_saved(self, current_user=None):
         list_of_saved_announcements = Saved.Get_from_db(user_id=current_user.id)
@@ -54,7 +64,7 @@ class AnnouncementController(object):
             return jsonify(message='There is no saved announcements', status=200)
         for i in list_of_saved_announcements:
             an = Announcement.Get_from_db(announcement_id=i.announcement_id)
-            list_of_announcements.append([an.id, an.name, an.theme, an.description, an.location, (User.query.filter_by(id=an.user_id).first()).email], an.date_of_publication)
+            list_of_announcements.append([an.id, an.name, an.theme, an.description, an.location, (User.query.filter_by(id=an.user_id).first()).email, an.date_of_publication])
         return jsonify(list_of_local_announcements=list_of_announcements, status=200)
 
 
